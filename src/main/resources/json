@@ -1,0 +1,56 @@
+{
+    "body-json": {},
+    "params": {
+        "path": {
+            "entity": "empresas"
+        },
+        "querystring": {
+            "_orderBy": "created_at",
+            "_size": "10",
+            "_where": "gt(created_at, \"2016-01-01\")"
+        },
+        "header": {
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate, sdch",
+            "Accept-Language": "en-US,en;q=0.8,es;q=0.6",
+            "Cache-Control": "no-cache",
+            "CloudFront-Forwarded-Proto": "https",
+            "CloudFront-Is-Desktop-Viewer": "true",
+            "CloudFront-Is-Mobile-Viewer": "false",
+            "CloudFront-Is-SmartTV-Viewer": "false",
+            "CloudFront-Is-Tablet-Viewer": "false",
+            "CloudFront-Viewer-Country": "MX",
+            "Content-Type": "application/json",
+            "DNT": "1",
+            "Host": "l5xjuhoji9.execute-api.us-east-1.amazonaws.com",
+            "Postman-Token": "1e27c393-0115-73a2-ed83-e351968569af",
+            "User-Agent": "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36",
+            "Via": "1.1 38ddaa14c744d77c512b550361fc57b5.cloudfront.net (CloudFront)",
+            "X-Amz-Cf-Id": "fxTytO2_Ls14ADaXcKDPKKQZbx-K04X1r8GZi8O9G77a5jPDFsiXRQ==",
+            "X-Forwarded-For": "189.208.33.223, 216.137.42.6",
+            "X-Forwarded-Port": "443",
+            "X-Forwarded-Proto": "https"
+        }
+    },
+    "stage-variables": {},
+    "context": {
+        "account-id": "",
+        "api-id": "l5xjuhoji9",
+        "api-key": "",
+        "authorizer-principal-id": "",
+        "caller": "",
+        "cognito-authentication-provider": "",
+        "cognito-authentication-type": "",
+        "cognito-identity-id": "",
+        "cognito-identity-pool-id": "",
+        "http-method": "DELETE",
+        "stage": "contalinkapi",
+        "source-ip": "189.208.33.223",
+        "user": "",
+        "user-agent": "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36",
+        "user-arn": "",
+        "request-id": "1e15c278-2c35-11e6-bcd8-276ca1114293",
+        "resource-id": "xj6afa",
+        "resource-path": "/invoices"
+    }
+}
