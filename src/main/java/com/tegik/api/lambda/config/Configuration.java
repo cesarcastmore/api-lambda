@@ -29,13 +29,15 @@ import com.tegik.api.lambda.aws.AWSRequestAPI;
 
 public abstract class Configuration {
 
+	private AWSRequestAPI awsRequestApi;
+
 	public abstract Set<Class<?>> getClasses();
 
 	public void execute(InputStream inputStream, OutputStream outputStream) throws IOException, ParseException {
 
 		String jsonRequest = toString(inputStream);
 
-		AWSRequestAPI awsRequestApi = AWSRequestAPI.build(jsonRequest);
+		awsRequestApi = AWSRequestAPI.build(jsonRequest);
 		Set<Class<?>> objs = getClasses();
 
 		String[] endpoints = awsRequestApi.getContext().getResourcePath().substring(1).split("/");
@@ -48,13 +50,13 @@ public abstract class Configuration {
 
 				int cont = 0;
 				String path_find = endpoints[cont];
-				System.out.println("path_find: "+ path_find + " valuePath: " + valuePath);
-				while (!valuePath.equals(path_find) && cont < endpoints.length-1) {
+				while (!valuePath.equals(path_find) && cont < endpoints.length - 1) {
 					cont += 1;
 					path_find = path_find + "/" + endpoints[cont];
 				}
-				if(valuePath.equals(path_find)){
-					reviewMethods(obj, awsRequestApi);
+				cont += 1;
+				if (valuePath.equals(path_find)) {
+					reviewMethods(obj, endpoints, cont);
 				}
 
 			}
@@ -63,79 +65,32 @@ public abstract class Configuration {
 
 	}
 
-	private void reviewMethods(Class<?> obj, AWSRequestAPI awsRequestApi) {
+	private void reviewMethods(Class<?> obj, String endpoints[], int cont) {
 
 		for (Method method : obj.getDeclaredMethods()) {
 
 			if (method.isAnnotationPresent(GET.class) && awsRequestApi.getContext().getHttpMethod().equals("GET")) {
-
-				Annotation getAnnotation = obj.getAnnotation(GET.class);
-				GET get = (GET) getAnnotation;
-				Object[] objects = getParameters(method, awsRequestApi);
-
-				try {
-					if (objects != null)
-						method.invoke(obj.newInstance(), objects);
-					else
-						method.invoke(obj.newInstance());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				invokeMethod(obj, method, endpoints, cont);
 
 			} else if (method.isAnnotationPresent(POST.class)
 					&& awsRequestApi.getContext().getHttpMethod().equals("POST")) {
-
-				Annotation getAnnotation = obj.getAnnotation(POST.class);
-				POST post = (POST) getAnnotation;
-				Object[] objects = getParameters(method, awsRequestApi);
-
-				try {
-					if (objects != null)
-						method.invoke(obj.newInstance(), objects);
-					else
-						method.invoke(obj.newInstance());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				invokeMethod(obj, method, endpoints, cont);
 
 			} else if (method.isAnnotationPresent(PUT.class)
 					&& awsRequestApi.getContext().getHttpMethod().equals("PUT")) {
 
-				Annotation getAnnotation = obj.getAnnotation(PUT.class);
-				PUT put = (PUT) getAnnotation;
-				Object[] objects = getParameters(method, awsRequestApi);
-
-				try {
-					if (objects != null)
-						method.invoke(obj.newInstance(), objects);
-					else
-						method.invoke(obj.newInstance());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				invokeMethod(obj, method, endpoints, cont);
 
 			} else if (method.isAnnotationPresent(DELETE.class)
 					&& awsRequestApi.getContext().getHttpMethod().equals("DELETE")) {
-
-				Annotation getAnnotation = obj.getAnnotation(GET.class);
-				DELETE delete = (DELETE) getAnnotation;
-				Object[] objects = getParameters(method, awsRequestApi);
-
-				try {
-					if (objects != null)
-						method.invoke(obj.newInstance(), objects);
-					else
-						method.invoke(obj.newInstance());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				invokeMethod(obj, method, endpoints, cont);
 
 			}
 		}
 
 	}
 
-	private Object[] getParameters(Method method, AWSRequestAPI awsRequestApi) {
+	private Object[] getParameters(Method method) {
 		Annotation[][] parameterAnnotations = method.getParameterAnnotations();
 		Class<?>[] parameters = method.getParameterTypes();
 		List<Object> listaObjects = new ArrayList<Object>();
@@ -161,6 +116,48 @@ public abstract class Configuration {
 		}
 
 		return listaObjects.toArray(new Object[listaObjects.size()]);
+	}
+
+	private void invokeMethod(Class<?> obj, Method method, String endpoints[], int cont) {
+		Object[] objects = getParameters(method);
+
+		try {
+			if (method.isAnnotationPresent(Path.class) && endpoints.length > cont) {
+
+				Annotation pathAnnotation = (Path) method.getAnnotation(Path.class);
+
+				Path path = (Path) pathAnnotation;
+				String valuePath = path.value();
+				String valueFind = endpoints[cont];
+				
+				if (valueFind.equals(path.value())) {
+					if (objects != null)
+						method.invoke(obj.newInstance(), objects);
+				}
+
+				cont += 1;
+				for (int i = cont; i < endpoints.length; i++) {
+
+					valueFind = valueFind + "/" + endpoints[i];
+					if (valueFind.equals(path.value())) {
+						System.out.println("cont: " + i + " endpoint" + endpoints[i] + " value ");
+
+						if (objects != null)
+							method.invoke(obj.newInstance(), objects);
+
+					}
+				}
+
+			} else if (!method.isAnnotationPresent(Path.class) && endpoints.length <= cont) {
+				if (objects != null)
+					method.invoke(obj.newInstance(), objects);
+				else
+					method.invoke(obj.newInstance());
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private Object transform(String objClass, String value) {

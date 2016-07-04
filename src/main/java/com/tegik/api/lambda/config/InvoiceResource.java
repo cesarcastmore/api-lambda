@@ -12,8 +12,15 @@ import com.tegik.api.lambda.annotations.Query;
 public class InvoiceResource {
 	
 	@GET
+	public void getall(@Query("_orderBy") String _orderBy){
+		System.out.println("invoices GET ALL: "+ _orderBy );
+		
+	}
+	
+	@GET
+	@Path("{invoiceId}")
 	public void get(@Query("_orderBy") String _orderBy){
-		System.out.println("invoices GET: "+ _orderBy );
+		System.out.println("invoices GET ONE: "+ _orderBy );
 		
 	}
 	
