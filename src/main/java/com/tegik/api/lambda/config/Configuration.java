@@ -24,6 +24,7 @@ import com.tegik.api.lambda.annotations.GET;
 import com.tegik.api.lambda.annotations.POST;
 import com.tegik.api.lambda.annotations.PUT;
 import com.tegik.api.lambda.annotations.Path;
+import com.tegik.api.lambda.annotations.PathParam;
 import com.tegik.api.lambda.annotations.Query;
 import com.tegik.api.lambda.aws.AWSRequestAPI;
 
@@ -110,7 +111,18 @@ public abstract class Configuration {
 						listaObjects.add(null);
 					}
 
-				}
+				} else if (annotation instanceof PathParam) {
+					PathParam pathParam = (PathParam) annotation;
+
+					if (awsRequestApi.getParams().getPath().containsKey(pathParam.value())) {
+						String valuePathRequest = awsRequestApi.getParams().getPath().get(pathParam.value());
+						System.out.println("valuePath" + pathParam.value());
+						listaObjects.add(transform(parameter.getName(), valuePathRequest));
+					} else {
+						listaObjects.add(null);
+					}
+
+				} 
 
 			}
 		}
@@ -129,7 +141,7 @@ public abstract class Configuration {
 				Path path = (Path) pathAnnotation;
 				String valuePath = path.value();
 				String valueFind = endpoints[cont];
-				
+
 				if (valueFind.equals(path.value())) {
 					if (objects != null)
 						method.invoke(obj.newInstance(), objects);
@@ -140,7 +152,6 @@ public abstract class Configuration {
 
 					valueFind = valueFind + "/" + endpoints[i];
 					if (valueFind.equals(path.value())) {
-						System.out.println("cont: " + i + " endpoint" + endpoints[i] + " value ");
 
 						if (objects != null)
 							method.invoke(obj.newInstance(), objects);

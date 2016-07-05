@@ -2,7 +2,7 @@
     "body-json": {},
     "params": {
         "path": {
-            "entity": "empresas"
+            "invoiceId": "123456"
         },
         "querystring": {
             "_orderBy": "created_at",
