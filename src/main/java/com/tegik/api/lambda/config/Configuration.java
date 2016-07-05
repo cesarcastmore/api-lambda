@@ -19,13 +19,15 @@ import java.util.Set;
 
 import org.json.simple.parser.ParseException;
 
+import com.tegik.api.lambda.annotations.Consumes;
+import com.tegik.api.lambda.annotations.ContentType;
 import com.tegik.api.lambda.annotations.DELETE;
 import com.tegik.api.lambda.annotations.GET;
 import com.tegik.api.lambda.annotations.POST;
 import com.tegik.api.lambda.annotations.PUT;
 import com.tegik.api.lambda.annotations.Path;
 import com.tegik.api.lambda.annotations.PathParam;
-import com.tegik.api.lambda.annotations.Query;
+import com.tegik.api.lambda.annotations.QueryParam;
 import com.tegik.api.lambda.aws.AWSRequestAPI;
 
 public abstract class Configuration {
@@ -67,62 +69,79 @@ public abstract class Configuration {
 	}
 
 	private void reviewMethods(Class<?> obj, String endpoints[], int cont) {
+	
 
 		for (Method method : obj.getDeclaredMethods()) {
+			
+			//There is a Consumes annotation and specify the content type received
+			Consumes cons = null;
+			if (method.isAnnotationPresent(Consumes.class)) {
+				cons = method.getAnnotation(Consumes.class);
+			}
 
 			if (method.isAnnotationPresent(GET.class) && awsRequestApi.getContext().getHttpMethod().equals("GET")) {
-				invokeMethod(obj, method, endpoints, cont);
+				invokeMethod(obj, method, endpoints, cont, cons);
 
 			} else if (method.isAnnotationPresent(POST.class)
 					&& awsRequestApi.getContext().getHttpMethod().equals("POST")) {
-				invokeMethod(obj, method, endpoints, cont);
+				invokeMethod(obj, method, endpoints, cont, cons);
 
 			} else if (method.isAnnotationPresent(PUT.class)
 					&& awsRequestApi.getContext().getHttpMethod().equals("PUT")) {
 
-				invokeMethod(obj, method, endpoints, cont);
+				invokeMethod(obj, method, endpoints, cont, cons);
 
 			} else if (method.isAnnotationPresent(DELETE.class)
 					&& awsRequestApi.getContext().getHttpMethod().equals("DELETE")) {
-				invokeMethod(obj, method, endpoints, cont);
+				invokeMethod(obj, method, endpoints, cont, cons);
 
 			}
 		}
 
 	}
 
-	private Object[] getParameters(Method method) {
+	private Object[] getParameters(Method method, Consumes cons) {
 		Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-		Class<?>[] parameters = method.getParameterTypes();
+		Class<?>[] parametersClass = method.getParameterTypes();
 		List<Object> listaObjects = new ArrayList<Object>();
 
 		for (int x = 0; x < parameterAnnotations.length; x++) {
-			Class<?> parameter = parameters[x];
 
+			Class<?> parameterClass = parametersClass[x];
+
+			// there are not annotations
+			if (parameterAnnotations[x].length == 0) {
+				listaObjects.add(
+						transformConsumes(parameterClass.getName(), awsRequestApi.getBodyJson().toJSONString(), cons));
+			}
+
+			// there are annotations
 			for (Annotation annotation : parameterAnnotations[x]) {
 
-				if (annotation instanceof Query) {
-					Query query = (Query) annotation;
+				// Annotation QueryPath
+				if (annotation instanceof QueryParam) {
+					QueryParam query = (QueryParam) annotation;
 
 					if (awsRequestApi.getParams().getQuerystring().containsKey(query.value())) {
 						String valueQueryRequest = awsRequestApi.getParams().getQuerystring().get(query.value());
-						listaObjects.add(transform(parameter.getName(), valueQueryRequest));
+						listaObjects.add(transform(parameterClass.getName(), valueQueryRequest));
 					} else {
 						listaObjects.add(null);
 					}
 
-				} else if (annotation instanceof PathParam) {
+				}
+				// Annotation PathParam
+				else if (annotation instanceof PathParam) {
 					PathParam pathParam = (PathParam) annotation;
 
 					if (awsRequestApi.getParams().getPath().containsKey(pathParam.value())) {
 						String valuePathRequest = awsRequestApi.getParams().getPath().get(pathParam.value());
-						System.out.println("valuePath" + pathParam.value());
-						listaObjects.add(transform(parameter.getName(), valuePathRequest));
+						listaObjects.add(transform(parameterClass.getName(), valuePathRequest));
 					} else {
 						listaObjects.add(null);
 					}
 
-				} 
+				}
 
 			}
 		}
@@ -130,8 +149,8 @@ public abstract class Configuration {
 		return listaObjects.toArray(new Object[listaObjects.size()]);
 	}
 
-	private void invokeMethod(Class<?> obj, Method method, String endpoints[], int cont) {
-		Object[] objects = getParameters(method);
+	private void invokeMethod(Class<?> obj, Method method, String endpoints[], int cont, Consumes cons) {
+		Object[] objects = getParameters(method, cons);
 
 		try {
 			if (method.isAnnotationPresent(Path.class) && endpoints.length > cont) {
@@ -177,6 +196,22 @@ public abstract class Configuration {
 			return new String(value);
 		} else
 			return null;
+	}
+
+	private Object transformConsumes(String objClass, String value, Consumes cons) {
+
+		if (cons == null) {
+			return null;
+		}
+		for (int i = 0; i < cons.value().length; i++) {
+			if (objClass.equals("java.lang.String")
+					&& awsRequestApi.getParams().getHeader().get("Content-Type").equals("application/json")
+					&& cons.value()[i] == ContentType.APPLICATION_JSON) {
+				return new String(value);
+			}
+		}
+
+		return null;
 	}
 
 	private String toString(InputStream in) throws IOException {

@@ -1,5 +1,5 @@
 {
-    "body-json": {},
+    "body-json": { "name": "value1"},
     "params": {
         "path": {
             "invoiceId": "123456"
@@ -43,7 +43,7 @@
         "cognito-authentication-type": "",
         "cognito-identity-id": "",
         "cognito-identity-pool-id": "",
-        "http-method": "GET",
+        "http-method": "DELETE",
         "stage": "contalinkapi",
         "source-ip": "189.208.33.223",
         "user": "",
