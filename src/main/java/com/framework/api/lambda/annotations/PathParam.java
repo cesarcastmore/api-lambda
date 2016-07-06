@@ -1,4 +1,4 @@
-package com.tegik.api.lambda.annotations;
+package com.framework.api.lambda.annotations;
 
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;

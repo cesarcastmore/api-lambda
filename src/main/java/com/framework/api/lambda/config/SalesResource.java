@@ -1,11 +1,11 @@
-package com.tegik.api.lambda.config;
+package com.framework.api.lambda.config;
 
-import com.tegik.api.lambda.annotations.DELETE;
-import com.tegik.api.lambda.annotations.GET;
-import com.tegik.api.lambda.annotations.POST;
-import com.tegik.api.lambda.annotations.PUT;
-import com.tegik.api.lambda.annotations.Path;
-import com.tegik.api.lambda.annotations.QueryParam;
+import com.framework.api.lambda.annotations.DELETE;
+import com.framework.api.lambda.annotations.GET;
+import com.framework.api.lambda.annotations.POST;
+import com.framework.api.lambda.annotations.PUT;
+import com.framework.api.lambda.annotations.Path;
+import com.framework.api.lambda.annotations.QueryParam;
 
 
 @Path("sales")

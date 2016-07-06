@@ -1,4 +1,4 @@
-package com.tegik.api.lambda.config;
+package com.framework.api.lambda.config;
 
 import java.util.HashSet;
 import java.util.Set;

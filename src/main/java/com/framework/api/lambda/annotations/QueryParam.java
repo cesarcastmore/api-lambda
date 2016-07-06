@@ -1,4 +1,4 @@
-package com.tegik.api.lambda.annotations;
+package com.framework.api.lambda.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

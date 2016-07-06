@@ -1,4 +1,4 @@
-package com.tegik.api.lambda.aws;
+package com.framework.api.lambda.aws;
 
 
 import java.util.HashMap;

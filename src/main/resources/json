@@ -2,7 +2,7 @@
     "body-json": { "name": "value1"},
     "params": {
         "path": {
-            "invoiceId": "123456"
+           
         },
         "querystring": {
             "_orderBy": "created_at",
@@ -32,7 +32,7 @@
             "X-Forwarded-Proto": "https"
         }
     },
-    "stage-variables": {},
+    "stage-variables": {"apellido": "castillo"},
     "context": {
         "account-id": "",
         "api-id": "l5xjuhoji9",
@@ -43,7 +43,7 @@
         "cognito-authentication-type": "",
         "cognito-identity-id": "",
         "cognito-identity-pool-id": "",
-        "http-method": "DELETE",
+        "http-method": "POST",
         "stage": "contalinkapi",
         "source-ip": "189.208.33.223",
         "user": "",
@@ -51,6 +51,6 @@
         "user-arn": "",
         "request-id": "1e15c278-2c35-11e6-bcd8-276ca1114293",
         "resource-id": "xj6afa",
-        "resource-path": "/invoices/{invoiceId}"
+        "resource-path": "/invoices"
     }
 }
