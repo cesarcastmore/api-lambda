@@ -1,4 +1,4 @@
-package com.framework.api.lambda.config;
+package com.framework.api.lambda.test;
 
 import com.framework.api.lambda.annotations.Consumes;
 import com.framework.api.lambda.annotations.ContentType;
@@ -15,15 +15,15 @@ import com.framework.api.lambda.annotations.StageVariable;
 @Path("invoices")
 public class InvoiceResource {
 	
-	@StageVariable("apellido")
-	public String apellido;
+	@StageVariable("database")
+	public String database;
 	
 
 	@GET
 	@Produces(ContentType.APPLICATION_JSON)
 	public String getall(@QueryParam("_orderBy") String _orderBy) {
-		System.out.println("invoices GET ALL: " + _orderBy);
-		return null;
+		System.out.println("invoices GET ALL: query: " + _orderBy);
+		return "[{\"name\": \"cesar\", \"id\": \"1\"}]";
 
 	}
 
@@ -31,9 +31,8 @@ public class InvoiceResource {
 	@Path("{invoiceId}")
 	@Produces(ContentType.APPLICATION_JSON)
 	public String get(@PathParam("invoiceId") String invoiceId, String json) {
-		System.out.println("invoices GET ONE: " + invoiceId);
-		
-		return null;
+		System.out.println("invoices GET ONE: invoiceId: " + invoiceId);
+		return "{\"name\": \"cesar\", \"id\": \"1\"}";
 
 	}
 
@@ -41,8 +40,8 @@ public class InvoiceResource {
 	@Consumes(ContentType.APPLICATION_JSON)
 	@Produces(ContentType.APPLICATION_JSON)
 	public String post(String json) {
-		System.out.println("invoices POST: " + json + " apellido "+ apellido);
-		return "{\"name\": \"Cesar\"}";
+		System.out.println("invoices POST:  json: " + json + " database "+ database);
+		return "{\"name\": \"cesar\", \"id\": \"1\"}";
 
 	}
 
@@ -52,7 +51,8 @@ public class InvoiceResource {
 	@Produces(ContentType.APPLICATION_JSON)
 	public String put(@PathParam("invoiceId") String invoiceId, String json) {
 		System.out.println("invoices PUT: " + "json: "+  json+  " invoice Id"+ invoiceId);
-		return "{\"name\": \"Cesar\"}";
+		return "{\"name\": \"cesar\", \"id\": \"1\"}";
+
 
 
 	}
@@ -60,7 +60,7 @@ public class InvoiceResource {
 	@DELETE
 	@Path("{invoiceId}")
 	public void delete(@PathParam("invoiceId") String invoiceId) {
-		System.out.println("invoices DELETE: invoiceId"+ invoiceId);
+		System.out.println("invoices DELETE: invoiceId"+ invoiceId+ "   database "+ database);
 
 	}
 

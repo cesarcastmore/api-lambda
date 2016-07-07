@@ -11,7 +11,7 @@ import org.json.simple.parser.ParseException;
 
 public class AWSRequestAPI {
 
-	private JSONObject bodyJson;
+	private String bodyJson;
 	private Params params;
 	private Context context;
 	Map<String, String> stageVariables;
@@ -23,7 +23,7 @@ public class AWSRequestAPI {
 		AWSRequestAPI requestAws = new AWSRequestAPI();
 
 		if (jsonRequest.containsKey("body-json")) {
-			JSONObject bodyJson = (JSONObject) jsonRequest.get("body-json");
+			String bodyJson = (String) jsonRequest.get("body-json");
 			requestAws.setBodyJson(bodyJson);
 
 		}
@@ -56,11 +56,11 @@ public class AWSRequestAPI {
 		return requestAws;
 	}
 
-	public JSONObject getBodyJson() {
+	public String getBodyJson() {
 		return bodyJson;
 	}
 
-	public void setBodyJson(JSONObject bodyJson) {
+	public void setBodyJson(String bodyJson) {
 		this.bodyJson = bodyJson;
 	}
 

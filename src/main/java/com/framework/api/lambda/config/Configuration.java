@@ -33,44 +33,48 @@ import com.framework.api.lambda.annotations.Produces;
 import com.framework.api.lambda.annotations.QueryParam;
 import com.framework.api.lambda.annotations.StageVariable;
 import com.framework.api.lambda.aws.AWSRequestAPI;
+import com.framework.api.lambda.test.ConfigurationExample;
 
 public abstract class Configuration {
 
-	private AWSRequestAPI awsRequestApi; 
+	private AWSRequestAPI awsRequestApi;
 	private OutputStream outputStream;
 
 	public abstract Set<Class<?>> getClasses();
 
 	public void execute(InputStream inputStream, OutputStream outputStream) throws Exception {
-		
-		this.outputStream=outputStream;
-
 		String jsonRequest = toString(inputStream);
-
 		awsRequestApi = AWSRequestAPI.build(jsonRequest);
+		this.outputStream=outputStream;
+		execute(awsRequestApi, outputStream);
+
+	}
+
+	public void execute(AWSRequestAPI awsRequestApi, OutputStream outputStream)
+			throws InstantiationException, IllegalAccessException {
+		this.outputStream = outputStream;
 		Set<Class<?>> objs = getClasses();
+		this.awsRequestApi = awsRequestApi;
 
 		String[] endpoints = awsRequestApi.getContext().getResourcePath().substring(1).split("/");
 
 		for (Class<?> obj : objs) {
-			
-			Object newInstance= obj.newInstance();
+			Object newInstance = obj.newInstance();
 			if (obj.isAnnotationPresent(Path.class)) {
+
 				Annotation pathAnnotation = obj.getAnnotation(Path.class);
 				Path path = (Path) pathAnnotation;
 				String valuePath = path.value();
-				
-				Field[] fields= obj.getFields();
-				for(int f=0; f<fields.length; f++){
-					if(fields[f].isAnnotationPresent(StageVariable.class)){
-						Annotation fieldAnnotation= fields[f].getAnnotation(StageVariable.class);
-						StageVariable stageVariable= (StageVariable) fieldAnnotation;
-						String nameStageVariable= stageVariable.value();
-						System.out.println("nameStageVariable: "+nameStageVariable);
 
-						if(awsRequestApi.getStageVariables().containsKey(nameStageVariable)){
-							String valueStageVariable=awsRequestApi.getStageVariables().get(nameStageVariable);
-							System.out.println(valueStageVariable);
+				Field[] fields = obj.getFields();
+				for (int f = 0; f < fields.length; f++) {
+					if (fields[f].isAnnotationPresent(StageVariable.class)) {
+						Annotation fieldAnnotation = fields[f].getAnnotation(StageVariable.class);
+						StageVariable stageVariable = (StageVariable) fieldAnnotation;
+						String nameStageVariable = stageVariable.value();
+
+						if (awsRequestApi.getStageVariables().containsKey(nameStageVariable)) {
+							String valueStageVariable = awsRequestApi.getStageVariables().get(nameStageVariable);
 							fields[f].set(newInstance, valueStageVariable);
 						}
 					}
@@ -93,7 +97,7 @@ public abstract class Configuration {
 
 	}
 
-	private void reviewMethods(Class<?> obj, Object newInstance,  String endpoints[], int cont) {
+	private void reviewMethods(Class<?> obj, Object newInstance, String endpoints[], int cont) {
 
 		for (Method method : obj.getDeclaredMethods()) {
 
@@ -136,8 +140,7 @@ public abstract class Configuration {
 
 			// there are not annotations
 			if (parameterAnnotations[x].length == 0) {
-				listaObjects.add(
-						transformConsumes(parameterClass.getName(), awsRequestApi.getBodyJson().toJSONString(), cons));
+				listaObjects.add(transformConsumes(parameterClass.getName(), awsRequestApi.getBodyJson(), cons));
 			}
 
 			// there are annotations
@@ -287,16 +290,16 @@ public abstract class Configuration {
 
 	private void transformProduces(Object obj, Produces prod) throws IOException {
 
-		if (prod == null) {
-		}
+		if (obj != null) {
+			for (int i = 0; i < prod.value().length; i++) {
+				if (obj.getClass().getName().equals("java.lang.String")
+						&& awsRequestApi.getParams().getHeader().get("Content-Type").equals("application/json")
+						&& prod.value()[i] == ContentType.APPLICATION_JSON) {
+					String stringObject = (String) obj;
+					outputStream.write(stringObject.getBytes(Charset.forName("UTF-8")));
+					outputStream.close();
 
-		for (int i = 0; i < prod.value().length; i++) {
-			if (obj.getClass().getName().equals("java.lang.String")
-					&& awsRequestApi.getParams().getHeader().get("Content-Type").equals("application/json")
-					&& prod.value()[i] == ContentType.APPLICATION_JSON) {
-				String stringObject = (String) obj;
-				outputStream.write(stringObject.getBytes(Charset.forName("UTF-8")));
-
+				}
 			}
 		}
 
@@ -313,22 +316,6 @@ public abstract class Configuration {
 
 		br.close();
 		return sb.toString();
-	}
-
-	public static void main(String args[]) {
-		String readFile;
-		try {
-			readFile = new Scanner(new File("./src/main/resources/json"), "UTF-8").useDelimiter("\\A").next();
-
-			InputStream inputStream = new ByteArrayInputStream(readFile.getBytes(StandardCharsets.UTF_8));
-			Configuration config = new ConfigurationExample();
-			config.execute(inputStream, new FileOutputStream("./src/main/resources/respuesta.json"));
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
 	}
 
 }

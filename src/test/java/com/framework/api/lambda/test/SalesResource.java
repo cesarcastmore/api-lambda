@@ -1,4 +1,4 @@
-package com.framework.api.lambda.config;
+package com.framework.api.lambda.test;
 
 import com.framework.api.lambda.annotations.DELETE;
 import com.framework.api.lambda.annotations.GET;
