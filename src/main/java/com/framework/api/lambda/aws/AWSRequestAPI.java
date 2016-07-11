@@ -1,4 +1,4 @@
-package com.tegik.api.lambda.aws;
+package com.framework.api.lambda.aws;
 
 
 import java.util.HashMap;
@@ -11,7 +11,7 @@ import org.json.simple.parser.ParseException;
 
 public class AWSRequestAPI {
 
-	private JSONObject bodyJson;
+	private String bodyJson;
 	private Params params;
 	private Context context;
 	Map<String, String> stageVariables;
@@ -23,10 +23,13 @@ public class AWSRequestAPI {
 		AWSRequestAPI requestAws = new AWSRequestAPI();
 
 		if (jsonRequest.containsKey("body-json")) {
-			JSONObject bodyJson = (JSONObject) jsonRequest.get("body-json");
+			String bodyJson = (String) jsonRequest.get("body-json");
 			requestAws.setBodyJson(bodyJson);
 
 		}
+		
+	
+		
 
 		if (jsonRequest.containsKey("params")) {
 			JSONObject paramsJson = (JSONObject) jsonRequest.get("params");
@@ -56,11 +59,11 @@ public class AWSRequestAPI {
 		return requestAws;
 	}
 
-	public JSONObject getBodyJson() {
+	public String getBodyJson() {
 		return bodyJson;
 	}
 
-	public void setBodyJson(JSONObject bodyJson) {
+	public void setBodyJson(String bodyJson) {
 		this.bodyJson = bodyJson;
 	}
 
@@ -87,6 +90,9 @@ public class AWSRequestAPI {
 	public void setStageVariables(Map<String, String> stageVariables) {
 		this.stageVariables = stageVariables;
 	}
+	
+
+
 
 	public static class Params {
 

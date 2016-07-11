@@ -1,8 +1,8 @@
 {
-    "body-json": {},
+    "body-json": { "name": "value1"},
     "params": {
         "path": {
-            "entity": "empresas"
+           
         },
         "querystring": {
             "_orderBy": "created_at",
@@ -32,7 +32,7 @@
             "X-Forwarded-Proto": "https"
         }
     },
-    "stage-variables": {},
+    "stage-variables": {"apellido": "castillo"},
     "context": {
         "account-id": "",
         "api-id": "l5xjuhoji9",
@@ -43,7 +43,7 @@
         "cognito-authentication-type": "",
         "cognito-identity-id": "",
         "cognito-identity-pool-id": "",
-        "http-method": "DELETE",
+        "http-method": "POST",
         "stage": "contalinkapi",
         "source-ip": "189.208.33.223",
         "user": "",

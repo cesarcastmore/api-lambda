@@ -1,4 +1,4 @@
-package com.tegik.api.lambda.annotations;
+package com.framework.api.lambda.annotations;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -8,6 +8,6 @@ import java.lang.annotation.Target;
 
 @Retention(RUNTIME)
 @Target(METHOD)
-public @interface POST {
+public @interface DELETE {
 
 }
