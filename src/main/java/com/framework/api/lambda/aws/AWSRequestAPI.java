@@ -27,6 +27,9 @@ public class AWSRequestAPI {
 			requestAws.setBodyJson(bodyJson);
 
 		}
+		
+	
+		
 
 		if (jsonRequest.containsKey("params")) {
 			JSONObject paramsJson = (JSONObject) jsonRequest.get("params");
@@ -87,6 +90,9 @@ public class AWSRequestAPI {
 	public void setStageVariables(Map<String, String> stageVariables) {
 		this.stageVariables = stageVariables;
 	}
+	
+
+
 
 	public static class Params {
 

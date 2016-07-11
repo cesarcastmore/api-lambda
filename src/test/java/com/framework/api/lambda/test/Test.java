@@ -1,9 +1,15 @@
 package com.framework.api.lambda.test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 import com.framework.api.lambda.client.Request;
 import com.framework.api.lambda.client.Response;
+
+
 
 public class Test {
 	
@@ -14,6 +20,9 @@ public class Test {
 		get();
 		post();
 		put();
+		
+
+
 	
 	}
 	

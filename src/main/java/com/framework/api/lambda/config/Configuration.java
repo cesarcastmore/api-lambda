@@ -14,10 +14,13 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.simple.parser.ParseException;
 
@@ -316,6 +319,18 @@ public abstract class Configuration {
 
 		br.close();
 		return sb.toString();
+	}
+	
+	
+	private static String find(String regexpresion, String text) throws SQLException {
+
+		Pattern pattern = Pattern.compile(regexpresion);
+		Matcher matcher = pattern.matcher(text);
+		if (matcher.find()) {
+			return matcher.group(0);
+		}
+
+		return null;
 	}
 
 }

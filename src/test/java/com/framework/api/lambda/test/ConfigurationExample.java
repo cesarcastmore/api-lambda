@@ -19,8 +19,10 @@ public class ConfigurationExample extends Configuration{
 		resources.add(SalesResource.class);
 		resources.add(InvoiceResource.class);
 
+
 		return resources;
 	}
+	
 	
 
 }
